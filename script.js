@@ -1,38 +1,7 @@
-// ============ Бронирование через jsonblob.com ============
-const STORAGE_KEY = 'wishlist:mine';
-
-const State = {
-  reserved: new Set(),
-  mine: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
-};
-
-const BLOB_ENABLED = typeof BLOB_URL !== 'undefined' && Boolean(BLOB_URL);
-
-async function fetchReserved() {
-  if (!BLOB_ENABLED) return [];
-  try {
-    const res = await fetch(BLOB_URL, { cache: 'no-store' });
-    if (!res.ok) throw new Error(res.status);
-    const data = await res.json();
-    const arr = data && data.reserved;
-    return Array.isArray(arr) ? arr : [];
-  } catch (e) { console.error('blob read:', e); return []; }
-}
-
-async function pushReserved() {
-  if (!BLOB_ENABLED) return false;
-  try {
-    const res = await fetch(BLOB_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ reserved: [...State.reserved] }),
-    });
-    return res.ok;
-  } catch (e) { console.error('blob write:', e); return false; }
-}
-
-function saveMine() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...State.mine]));
+// ============ «Я беру» → WhatsApp ============
+function whatsappLink(wishTitle) {
+  const text = `Привет! Я беру со списка: ${wishTitle}`;
+  return `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`;
 }
 
 // ============ Рендер ============
@@ -57,12 +26,7 @@ function linkHost(url) {
 }
 
 function renderReserveBtn(wish) {
-  const isReserved = State.reserved.has(wish.id);
-  const isMine = State.mine.has(wish.id);
-  if (!BLOB_ENABLED) return `<button class="btn btn--disabled" disabled>Бронь — скоро</button>`;
-  if (isReserved && isMine) return `<button class="btn btn--reserved" data-toggle="${wish.id}">Это я · снять</button>`;
-  if (isReserved) return `<button class="btn btn--disabled" disabled>Уже занято</button>`;
-  return `<button class="btn" data-toggle="${wish.id}">Забронировать</button>`;
+  return `<a class="btn" href="${whatsappLink(wish.title)}" target="_blank" rel="noopener">Я беру → в WhatsApp</a>`;
 }
 
 function renderAction(wish) {
@@ -124,12 +88,7 @@ function renderWish(wish, idx) {
 }
 
 function renderSmallAction(w) {
-  const isReserved = State.reserved.has(w.id);
-  const isMine = State.mine.has(w.id);
-  if (!BLOB_ENABLED) return `<button class="small-wish__btn small-wish__btn--mute" disabled>—</button>`;
-  if (isReserved && isMine) return `<button class="small-wish__btn small-wish__btn--mine" data-toggle="${w.id}">это я ✓</button>`;
-  if (isReserved) return `<button class="small-wish__btn small-wish__btn--mute" disabled>занято</button>`;
-  return `<button class="small-wish__btn" data-toggle="${w.id}">беру</button>`;
+  return `<a class="small-wish__btn" href="${whatsappLink(w.title)}" target="_blank" rel="noopener">беру</a>`;
 }
 
 function renderSmall(w) {
@@ -179,51 +138,17 @@ function refreshActionFor(wishId) {
   else if (small) el.innerHTML = renderSmallAction(small);
 }
 
-// ============ Бронирование ============
-
-async function toggleReservation(wishId, btn) {
-  if (!BLOB_ENABLED) return;
-  btn.classList.add('btn--loading');
-  const wasReserved = State.reserved.has(wishId);
-  if (wasReserved && !State.mine.has(wishId)) { btn.classList.remove('btn--loading'); return; }
-
-  if (wasReserved) { State.reserved.delete(wishId); State.mine.delete(wishId); }
-  else { State.reserved.add(wishId); State.mine.add(wishId); }
-  refreshActionFor(wishId);
-
-  const ok = await pushReserved();
-  if (!ok) {
-    if (wasReserved) { State.reserved.add(wishId); State.mine.add(wishId); }
-    else { State.reserved.delete(wishId); State.mine.delete(wishId); }
-    refreshActionFor(wishId);
-    alert('Не удалось сохранить. Попробуй ещё раз.');
-    return;
-  }
-  saveMine();
-}
-
-// ============ Старт ============
+// ============ Клики (копирование номера) ============
 
 document.addEventListener('click', (e) => {
   const copy = e.target.closest('[data-copy]');
-  if (copy) {
-    navigator.clipboard.writeText(copy.dataset.copy).then(() => {
-      const original = copy.textContent;
-      copy.classList.add('is-copied');
-      copy.textContent = 'Скопировано';
-      setTimeout(() => { copy.classList.remove('is-copied'); copy.textContent = original; }, 1600);
-    });
-    return;
-  }
-  const toggle = e.target.closest('[data-toggle]');
-  if (toggle) toggleReservation(toggle.dataset.toggle, toggle);
+  if (!copy) return;
+  navigator.clipboard.writeText(copy.dataset.copy).then(() => {
+    const original = copy.textContent;
+    copy.classList.add('is-copied');
+    copy.textContent = 'Скопировано';
+    setTimeout(() => { copy.classList.remove('is-copied'); copy.textContent = original; }, 1600);
+  });
 });
 
-(async function init() {
-  renderAll();
-  if (!BLOB_ENABLED) return;
-  const arr = await fetchReserved();
-  State.reserved = new Set(arr);
-  const allIds = [...WISHES.map(w => w.id), ...((typeof SMALL_WISHES !== 'undefined') ? SMALL_WISHES.map(w => w.id) : [])];
-  allIds.forEach(refreshActionFor);
-})();
+renderAll();

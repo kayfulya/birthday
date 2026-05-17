@@ -1,5 +1,8 @@
-// === Бронирование через jsonblob.com ===
-const BLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e30d9-7aa3-736c-bac8-1b96d56162cc';
+// === Бронирование через WhatsApp Ули ===
+// Гость кликает «Я беру» → открывается чат в WhatsApp с готовым сообщением.
+// Бесплатные облачные «бины» без регистрации не дают браузеру писать (CORS),
+// поэтому делаем самый простой и надёжный путь — прямое сообщение.
+const WHATSAPP_PHONE = '79697096595';
 
 // === Большие хочулики ===
 const WISHES = [
@@ -7,7 +10,7 @@ const WISHES = [
     id: 'kisses',
     title: 'Поцелуи в щёчку',
     subtitle: 'без счёта',
-    note: 'От тебя лично. Сколько хочешь — всё засчитается.',
+    note: 'Сколько хош!',
     type: 'sweet',
     image: 'assets/kisses.jpg',
     reservable: false,
@@ -27,7 +30,7 @@ const WISHES = [
     id: 'spider-robot',
     title: 'Танец робота-паука!',
     subtitle: 'я хочу его увидеть',
-    note: 'Покажи мне свой танец робота-паука. Всё засчитается, даже если страшно.',
+    note: 'Дополнительно начислю очки уважения!',
     type: 'sweet',
     image: 'assets/spider-robot.svg',
     reservable: false,
@@ -37,7 +40,7 @@ const WISHES = [
     id: 'botsad',
     title: 'Сводить меня в Ботанический сад',
     subtitle: '',
-    note: 'Хочу к пальмам. Возьми меня за руку и пошли.',
+    note: 'Я очень давно там не была...',
     type: 'experience',
     image: 'assets/botsad.svg',
     reservable: true,
@@ -47,7 +50,7 @@ const WISHES = [
     id: 'cap',
     title: 'Кепка «кайфуля»',
     subtitle: 'травяного цвета · с вышивкой',
-    note: '',
+    note: 'Очень хочу кепку травяного цвета с вышивкой «кайфуля!»',
     type: 'gift',
     price: null,
     link: null,
@@ -60,8 +63,8 @@ const WISHES = [
   {
     id: 'reab',
     title: 'Сбор на лечение',
-    subtitle: 'центр Бубновского',
-    note: 'Сколько хош!',
+    subtitle: 'Собираю деньги на реабилитацию',
+    note: 'Я раздробила себе два позвонка и сломала все кости в организме. Восстановилась, но до сих пор хромаю.',
     type: 'collect',
     target: 30000,
     raised: 0,
@@ -155,7 +158,7 @@ const WISHES = [
     id: 'litres',
     title: 'Подписка Литрес или Я.Книги',
     subtitle: 'на год',
-    note: '',
+    note: 'Обожаю читать! Это мой самый любимый способ избегания реальности!',
     type: 'gift',
     price: '~3 500 ₽',
     link: null,
@@ -165,7 +168,7 @@ const WISHES = [
   {
     id: 'shades',
     title: 'Тёмные очки',
-    subtitle: '',
+    subtitle: 'с коричневой оправой',
     note: 'От ультрафиолета.',
     type: 'gift',
     price: null,
