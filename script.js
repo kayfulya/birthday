@@ -1,7 +1,4 @@
 // ============ Бронирование через jsonblob.com ============
-// BLOB_URL задан в data.js. Используем Content-Type: text/plain — это «simple
-// request» по CORS, браузер не делает preflight OPTIONS.
-
 const STORAGE_KEY = 'wishlist:mine';
 
 const State = {
@@ -19,10 +16,7 @@ async function fetchReserved() {
     const data = await res.json();
     const arr = data && data.reserved;
     return Array.isArray(arr) ? arr : [];
-  } catch (e) {
-    console.error('blob read error:', e);
-    return [];
-  }
+  } catch (e) { console.error('blob read:', e); return []; }
 }
 
 async function pushReserved() {
@@ -34,10 +28,7 @@ async function pushReserved() {
       body: JSON.stringify({ reserved: [...State.reserved] }),
     });
     return res.ok;
-  } catch (e) {
-    console.error('blob write error:', e);
-    return false;
-  }
+  } catch (e) { console.error('blob write:', e); return false; }
 }
 
 function saveMine() {
@@ -68,16 +59,9 @@ function linkHost(url) {
 function renderReserveBtn(wish) {
   const isReserved = State.reserved.has(wish.id);
   const isMine = State.mine.has(wish.id);
-
-  if (!BLOB_ENABLED) {
-    return `<button class="btn btn--disabled" disabled>Бронь — скоро</button>`;
-  }
-  if (isReserved && isMine) {
-    return `<button class="btn btn--reserved" data-toggle="${wish.id}">Это я · снять бронь</button>`;
-  }
-  if (isReserved) {
-    return `<button class="btn btn--disabled" disabled>Уже занято</button>`;
-  }
+  if (!BLOB_ENABLED) return `<button class="btn btn--disabled" disabled>Бронь — скоро</button>`;
+  if (isReserved && isMine) return `<button class="btn btn--reserved" data-toggle="${wish.id}">Это я · снять</button>`;
+  if (isReserved) return `<button class="btn btn--disabled" disabled>Уже занято</button>`;
   return `<button class="btn" data-toggle="${wish.id}">Забронировать</button>`;
 }
 
@@ -86,35 +70,22 @@ function renderAction(wish) {
     const pct = Math.min(100, Math.round((wish.raised / wish.target) * 100));
     return `
       <div class="wish__progress">
-        <div class="wish__progress-bar">
-          <div class="wish__progress-fill" style="width: ${pct}%"></div>
-        </div>
-        <div class="wish__progress-text">
-          <span>${fmtMoney(wish.raised)} из ${fmtMoney(wish.target)}</span>
-          <span>${pct}%</span>
-        </div>
+        <div class="wish__progress-bar"><div class="wish__progress-fill" style="width: ${pct}%"></div></div>
+        <div class="wish__progress-text"><span>${fmtMoney(wish.raised)} из ${fmtMoney(wish.target)}</span><span>${pct}%</span></div>
       </div>
-      <button class="btn btn--ghost" data-copy="${wish.payment.value.replace(/\s/g, '')}">
-        Перевести → ${wish.payment.method}
-      </button>
+      <button class="btn btn--ghost" data-copy="${wish.payment.value.replace(/\s/g, '')}">Перевести → ${wish.payment.method}</button>
       <p class="wish__hint">${wish.payment.value}</p>
     `;
   }
-  if (wish.type === 'sweet') {
-    return `<p class="wish__hint">Без брони, сколько угодно.</p>`;
-  }
-  if (wish.type === 'social') {
-    return `<p class="wish__hint">Без брони — можно вместе.</p>`;
-  }
+  if (wish.type === 'sweet') return `<p class="wish__hint">Без брони, сколько угодно.</p>`;
+  if (wish.type === 'social') return `<p class="wish__hint">Без брони — можно вместе.</p>`;
   return renderReserveBtn(wish);
 }
 
 function renderMeta(wish) {
   const bits = [];
   if (wish.price) bits.push(`<span class="wish__price">${wish.price}</span>`);
-  if (wish.link) {
-    bits.push(`<a class="wish__link" href="${wish.link}" target="_blank" rel="noopener">Открыть на ${linkHost(wish.link)} →</a>`);
-  }
+  if (wish.link) bits.push(`<a class="wish__link" href="${wish.link}" target="_blank" rel="noopener">Открыть на ${linkHost(wish.link)} →</a>`);
   if (!bits.length) return '';
   return `<div class="wish__meta">${bits.join('')}</div>`;
 }
@@ -152,6 +123,28 @@ function renderWish(wish, idx) {
   `;
 }
 
+function renderSmallAction(w) {
+  const isReserved = State.reserved.has(w.id);
+  const isMine = State.mine.has(w.id);
+  if (!BLOB_ENABLED) return `<button class="small-wish__btn small-wish__btn--mute" disabled>—</button>`;
+  if (isReserved && isMine) return `<button class="small-wish__btn small-wish__btn--mine" data-toggle="${w.id}">это я ✓</button>`;
+  if (isReserved) return `<button class="small-wish__btn small-wish__btn--mute" disabled>занято</button>`;
+  return `<button class="small-wish__btn" data-toggle="${w.id}">беру</button>`;
+}
+
+function renderSmall(w) {
+  const subHtml = w.subtitle ? `<span class="small-wish__sub">${w.subtitle}</span>` : '';
+  return `
+    <li class="small-wish" id="wish-${w.id}">
+      <div class="small-wish__text">
+        <span class="small-wish__title">${w.title}</span>
+        ${subHtml}
+      </div>
+      <span class="small-wish__action" data-action="${w.id}">${renderSmallAction(w)}</span>
+    </li>
+  `;
+}
+
 function renderAll() {
   const wishesEl = document.getElementById('wishes');
   const favorites = WISHES.filter(w => w.favorite);
@@ -167,15 +160,23 @@ function renderAll() {
     html += rest.map((w, i) => renderWish(w, favorites.length + i)).join('');
   }
   wishesEl.innerHTML = html;
-  document.getElementById('count').textContent = WISHES.length;
+
+  const smallEl = document.getElementById('small-wishes');
+  if (smallEl && typeof SMALL_WISHES !== 'undefined') {
+    smallEl.innerHTML = SMALL_WISHES.map(renderSmall).join('');
+  }
+
+  const total = WISHES.length + (typeof SMALL_WISHES !== 'undefined' ? SMALL_WISHES.length : 0);
+  document.getElementById('count').textContent = total;
 }
 
 function refreshActionFor(wishId) {
-  const wish = WISHES.find(w => w.id === wishId);
-  if (!wish) return;
+  const big = WISHES.find(w => w.id === wishId);
+  const small = (typeof SMALL_WISHES !== 'undefined') ? SMALL_WISHES.find(w => w.id === wishId) : null;
   const el = document.querySelector(`[data-action="${wishId}"]`);
   if (!el) return;
-  el.innerHTML = renderAction(wish);
+  if (big) el.innerHTML = renderAction(big);
+  else if (small) el.innerHTML = renderSmallAction(small);
 }
 
 // ============ Бронирование ============
@@ -184,32 +185,18 @@ async function toggleReservation(wishId, btn) {
   if (!BLOB_ENABLED) return;
   btn.classList.add('btn--loading');
   const wasReserved = State.reserved.has(wishId);
+  if (wasReserved && !State.mine.has(wishId)) { btn.classList.remove('btn--loading'); return; }
 
-  if (wasReserved && !State.mine.has(wishId)) {
-    btn.classList.remove('btn--loading');
-    return;
-  }
-
-  if (wasReserved) {
-    State.reserved.delete(wishId);
-    State.mine.delete(wishId);
-  } else {
-    State.reserved.add(wishId);
-    State.mine.add(wishId);
-  }
+  if (wasReserved) { State.reserved.delete(wishId); State.mine.delete(wishId); }
+  else { State.reserved.add(wishId); State.mine.add(wishId); }
   refreshActionFor(wishId);
 
   const ok = await pushReserved();
   if (!ok) {
-    if (wasReserved) {
-      State.reserved.add(wishId);
-      State.mine.add(wishId);
-    } else {
-      State.reserved.delete(wishId);
-      State.mine.delete(wishId);
-    }
+    if (wasReserved) { State.reserved.add(wishId); State.mine.add(wishId); }
+    else { State.reserved.delete(wishId); State.mine.delete(wishId); }
     refreshActionFor(wishId);
-    alert('Не удалось сохранить бронь. Попробуй ещё раз через минуту.');
+    alert('Не удалось сохранить. Попробуй ещё раз.');
     return;
   }
   saveMine();
@@ -237,5 +224,6 @@ document.addEventListener('click', (e) => {
   if (!BLOB_ENABLED) return;
   const arr = await fetchReserved();
   State.reserved = new Set(arr);
-  WISHES.filter(w => w.reservable).forEach(w => refreshActionFor(w.id));
+  const allIds = [...WISHES.map(w => w.id), ...((typeof SMALL_WISHES !== 'undefined') ? SMALL_WISHES.map(w => w.id) : [])];
+  allIds.forEach(refreshActionFor);
 })();

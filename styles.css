@@ -35,10 +35,12 @@ body {
   height: 100vh;
   min-height: 600px;
   max-height: 1000px;
-  overflow: hidden;
+  overflow: visible;
   background: #1c1c1c;
   color: var(--cream);
 }
+.hero > .hero__bg, .hero > .hero__shade { /* clip background only */ }
+.hero { overflow: hidden; }
 
 .hero__bg {
   position: absolute;
@@ -438,6 +440,164 @@ body {
   justify-content: space-between;
 }
 
+/* ============= SMALL WISHES ============= */
+
+.small-section {
+  max-width: 1100px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+  position: relative;
+}
+@media (min-width: 860px) {
+  .small-section { padding: 0 48px; margin-top: 120px; }
+}
+
+.small-section__head {
+  position: relative;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+.small-section__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(28px, 4.2vw, 44px);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.small-section__hint {
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+
+.small-wishes {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .small-wishes { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+@media (min-width: 1000px) {
+  .small-wishes { grid-template-columns: repeat(3, 1fr); }
+}
+
+.small-wish {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  transition: border-color 0.18s;
+}
+.small-wish:hover { border-color: var(--ink); }
+
+.small-wish__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.small-wish__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.small-wish__sub {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.small-wish__action { flex-shrink: 0; }
+.small-wish__btn {
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 7px 14px;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.small-wish__btn:hover { background: var(--ink); color: var(--paper); }
+.small-wish__btn--mine {
+  background: var(--moss);
+  border-color: var(--moss);
+  color: var(--paper);
+}
+.small-wish__btn--mute {
+  color: var(--ink-mute);
+  border-color: var(--line);
+  cursor: not-allowed;
+}
+.small-wish__btn--mute:hover { background: transparent; color: var(--ink-mute); }
+
+/* ============= БЕЛКИ ============= */
+.squirrel {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+}
+.squirrel--hero {
+  top: 24px;
+  right: 18px;
+  width: 64px;
+  height: 64px;
+  transform: rotate(-12deg);
+}
+@media (min-width: 860px) {
+  .squirrel--hero { top: 36px; right: 56px; width: 90px; height: 90px; }
+}
+.squirrel--break {
+  position: relative;
+  display: block;
+  margin: 24px auto -12px;
+  width: 60px;
+  height: 60px;
+  transform: rotate(8deg);
+}
+.squirrel--small {
+  top: -8px;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  transform: rotate(14deg);
+}
+.squirrel--collect {
+  top: 18px;
+  right: 18px;
+  width: 64px;
+  height: 64px;
+  transform: rotate(-8deg);
+}
+@media (min-width: 860px) {
+  .squirrel--collect { right: 56px; width: 80px; height: 80px; }
+}
+.squirrel--footer {
+  position: relative;
+  display: block;
+  margin: 0 auto 12px;
+  width: 56px;
+  height: 56px;
+  transform: rotate(-4deg);
+}
+
 /* ============= COLLECT SUMMARY ============= */
 
 .collect-summary {
@@ -447,6 +607,7 @@ body {
   background: var(--paper);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  position: relative;
 }
 @media (min-width: 860px) {
   .collect-summary {
