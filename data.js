@@ -67,7 +67,7 @@ const WISHES = [
     type: 'gift',
     price: null,
     link: null,
-    image: 'assets/card.jpg',
+    image: 'assets/card.webp',
     reservable: true,
     favorite: true,
   },
