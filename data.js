@@ -1,5 +1,6 @@
-// === «Я беру» → WhatsApp Ули ===
-const WHATSAPP_PHONE = '79697096595';
+// === Анонимное бронирование через JSONBin ===
+const JSONBIN_ID = '6a099030250b1311c361f2b5';
+const JSONBIN_KEY = '$2a$10$i/lit6KKQrdJZ3FYZSf.b.2LipvqwbUTCWSG7yQIrECha8/EZx6C.';
 
 // === Сборы — общая ссылка на перевод в Т-Банк ===
 const TBANK_URL = 'https://www.tbank.ru/cf/4cS9QDSyPTm';

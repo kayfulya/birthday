@@ -1,7 +1,47 @@
-// ============ «Я беру» → WhatsApp ============
-function whatsappLink(wishTitle) {
-  const text = `Привет! Я беру со списка: ${wishTitle}`;
-  return `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`;
+// ============ Анонимное бронирование через JSONBin ============
+// Состояние массив { reserved: ['id1', 'id2', ...] } — кто кто, не знаем.
+// Кнопка «Это я» работает только у того гостя, что бронировал (по localStorage).
+
+const STORAGE_KEY = 'wishlist:mine';
+const BIN_BASE = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+const State = {
+  reserved: new Set(),
+  mine: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
+};
+
+async function fetchReserved() {
+  try {
+    const res = await fetch(`${BIN_BASE}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY },
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    const arr = (data.record && data.record.reserved) || [];
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    console.error('JSONBin read:', e);
+    return [];
+  }
+}
+
+async function pushReserved() {
+  try {
+    const res = await fetch(BIN_BASE, {
+      method: 'PUT',
+      headers: { 'X-Master-Key': JSONBIN_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reserved: [...State.reserved] }),
+    });
+    return res.ok;
+  } catch (e) {
+    console.error('JSONBin write:', e);
+    return false;
+  }
+}
+
+function saveMine() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...State.mine]));
 }
 
 // ============ Рендер ============
@@ -26,19 +66,16 @@ function linkHost(url) {
 }
 
 function renderReserveBtn(wish) {
-  return `<a class="btn" href="${whatsappLink(wish.title)}" target="_blank" rel="noopener">Я беру → в WhatsApp</a>`;
+  const isReserved = State.reserved.has(wish.id);
+  const isMine = State.mine.has(wish.id);
+  if (isReserved && isMine) return `<button class="btn btn--reserved" data-toggle="${wish.id}">Это я · снять</button>`;
+  if (isReserved) return `<button class="btn btn--disabled" disabled>Уже занято</button>`;
+  return `<button class="btn" data-toggle="${wish.id}">Забронировать</button>`;
 }
 
 function renderAction(wish) {
   if (wish.type === 'collect') {
-    const pct = Math.min(100, Math.round((wish.raised / wish.target) * 100));
-    return `
-      <div class="wish__progress">
-        <div class="wish__progress-bar"><div class="wish__progress-fill" style="width: ${pct}%"></div></div>
-        <div class="wish__progress-text"><span>цель ${fmtMoney(wish.target)}</span></div>
-      </div>
-      <a class="btn" href="${wish.payment.url}" target="_blank" rel="noopener">Перевести → ${wish.payment.method}</a>
-    `;
+    return `<a class="btn" href="${wish.payment.url}" target="_blank" rel="noopener">Перевести → ${wish.payment.method}</a>`;
   }
   if (wish.type === 'sweet') return `<p class="wish__hint">Без брони, сколько угодно.</p>`;
   if (wish.type === 'social') return `<p class="wish__hint">Без брони — можно вместе.</p>`;
@@ -105,25 +142,45 @@ function renderAll() {
 }
 
 function refreshActionFor(wishId) {
-  const big = WISHES.find(w => w.id === wishId);
-  const small = (typeof SMALL_WISHES !== 'undefined') ? SMALL_WISHES.find(w => w.id === wishId) : null;
+  const wish = WISHES.find(w => w.id === wishId);
+  if (!wish) return;
   const el = document.querySelector(`[data-action="${wishId}"]`);
   if (!el) return;
-  if (big) el.innerHTML = renderAction(big);
-  else if (small) el.innerHTML = renderSmallAction(small);
+  el.innerHTML = renderAction(wish);
 }
 
-// ============ Клики (копирование номера) ============
+// ============ Бронирование ============
+
+async function toggleReservation(wishId, btn) {
+  btn.classList.add('btn--loading');
+  const wasReserved = State.reserved.has(wishId);
+  if (wasReserved && !State.mine.has(wishId)) { btn.classList.remove('btn--loading'); return; }
+
+  if (wasReserved) { State.reserved.delete(wishId); State.mine.delete(wishId); }
+  else { State.reserved.add(wishId); State.mine.add(wishId); }
+  refreshActionFor(wishId);
+
+  const ok = await pushReserved();
+  if (!ok) {
+    if (wasReserved) { State.reserved.add(wishId); State.mine.add(wishId); }
+    else { State.reserved.delete(wishId); State.mine.delete(wishId); }
+    refreshActionFor(wishId);
+    alert('Не удалось сохранить. Попробуй ещё раз через минуту.');
+    return;
+  }
+  saveMine();
+}
+
+// ============ Старт ============
 
 document.addEventListener('click', (e) => {
-  const copy = e.target.closest('[data-copy]');
-  if (!copy) return;
-  navigator.clipboard.writeText(copy.dataset.copy).then(() => {
-    const original = copy.textContent;
-    copy.classList.add('is-copied');
-    copy.textContent = 'Скопировано';
-    setTimeout(() => { copy.classList.remove('is-copied'); copy.textContent = original; }, 1600);
-  });
+  const toggle = e.target.closest('[data-toggle]');
+  if (toggle) toggleReservation(toggle.dataset.toggle, toggle);
 });
 
-renderAll();
+(async function init() {
+  renderAll();
+  const arr = await fetchReserved();
+  State.reserved = new Set(arr);
+  WISHES.filter(w => w.reservable).forEach(w => refreshActionFor(w.id));
+})();
