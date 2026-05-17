@@ -545,57 +545,22 @@ body {
 }
 .small-wish__btn--mute:hover { background: transparent; color: var(--ink-mute); }
 
-/* ============= БЕЛКИ ============= */
+/* ============= БЕЛКА ============= */
 .squirrel {
-  position: absolute;
-  width: 72px;
-  height: 72px;
   pointer-events: none;
   z-index: 3;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.18));
 }
 .squirrel--hero {
-  top: 24px;
-  right: 18px;
-  width: 64px;
-  height: 64px;
-  transform: rotate(-12deg);
-}
-@media (min-width: 860px) {
-  .squirrel--hero { top: 36px; right: 56px; width: 90px; height: 90px; }
-}
-.squirrel--break {
-  position: relative;
-  display: block;
-  margin: 24px auto -12px;
-  width: 60px;
-  height: 60px;
-  transform: rotate(8deg);
-}
-.squirrel--small {
-  top: -8px;
-  right: 0;
-  width: 64px;
-  height: 64px;
-  transform: rotate(14deg);
-}
-.squirrel--collect {
+  position: absolute;
   top: 18px;
-  right: 18px;
-  width: 64px;
-  height: 64px;
-  transform: rotate(-8deg);
+  right: 12px;
+  width: 130px;
+  height: auto;
+  transform: rotate(-6deg);
 }
 @media (min-width: 860px) {
-  .squirrel--collect { right: 56px; width: 80px; height: 80px; }
-}
-.squirrel--footer {
-  position: relative;
-  display: block;
-  margin: 0 auto 12px;
-  width: 56px;
-  height: 56px;
-  transform: rotate(-4deg);
+  .squirrel--hero { top: 28px; right: 48px; width: 220px; }
 }
 
 /* ============= COLLECT SUMMARY ============= */
