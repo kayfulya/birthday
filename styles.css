@@ -657,21 +657,19 @@ body {
   letter-spacing: -0.01em;
 }
 
-.collect-summary__copy {
-  font: inherit;
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  padding: 9px 16px;
-  background: transparent;
-  color: var(--ink);
+.collect-summary__btn {
+  display: inline-block;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  padding: 14px 26px;
+  background: var(--ink);
+  color: var(--paper);
   border: 1px solid var(--ink);
   border-radius: 999px;
-  cursor: pointer;
-  align-self: flex-start;
+  text-decoration: none;
   transition: all 0.18s;
 }
-.collect-summary__copy:hover { background: var(--ink); color: var(--paper); }
-.collect-summary__copy.is-copied { background: var(--moss); border-color: var(--moss); color: var(--paper); }
+.collect-summary__btn:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
 
 /* ============= FOOTER ============= */
 

@@ -35,10 +35,9 @@ function renderAction(wish) {
     return `
       <div class="wish__progress">
         <div class="wish__progress-bar"><div class="wish__progress-fill" style="width: ${pct}%"></div></div>
-        <div class="wish__progress-text"><span>${fmtMoney(wish.raised)} из ${fmtMoney(wish.target)}</span><span>${pct}%</span></div>
+        <div class="wish__progress-text"><span>цель ${fmtMoney(wish.target)}</span></div>
       </div>
-      <button class="btn btn--ghost" data-copy="${wish.payment.value.replace(/\s/g, '')}">Перевести → ${wish.payment.method}</button>
-      <p class="wish__hint">${wish.payment.value}</p>
+      <a class="btn" href="${wish.payment.url}" target="_blank" rel="noopener">Перевести → ${wish.payment.method}</a>
     `;
   }
   if (wish.type === 'sweet') return `<p class="wish__hint">Без брони, сколько угодно.</p>`;
@@ -87,23 +86,6 @@ function renderWish(wish, idx) {
   `;
 }
 
-function renderSmallAction(w) {
-  return `<a class="small-wish__btn" href="${whatsappLink(w.title)}" target="_blank" rel="noopener">беру</a>`;
-}
-
-function renderSmall(w) {
-  const subHtml = w.subtitle ? `<span class="small-wish__sub">${w.subtitle}</span>` : '';
-  return `
-    <li class="small-wish" id="wish-${w.id}">
-      <div class="small-wish__text">
-        <span class="small-wish__title">${w.title}</span>
-        ${subHtml}
-      </div>
-      <span class="small-wish__action" data-action="${w.id}">${renderSmallAction(w)}</span>
-    </li>
-  `;
-}
-
 function renderAll() {
   const wishesEl = document.getElementById('wishes');
   const favorites = WISHES.filter(w => w.favorite);
@@ -119,14 +101,7 @@ function renderAll() {
     html += rest.map((w, i) => renderWish(w, favorites.length + i)).join('');
   }
   wishesEl.innerHTML = html;
-
-  const smallEl = document.getElementById('small-wishes');
-  if (smallEl && typeof SMALL_WISHES !== 'undefined') {
-    smallEl.innerHTML = SMALL_WISHES.map(renderSmall).join('');
-  }
-
-  const total = WISHES.length + (typeof SMALL_WISHES !== 'undefined' ? SMALL_WISHES.length : 0);
-  document.getElementById('count').textContent = total;
+  document.getElementById('count').textContent = WISHES.length;
 }
 
 function refreshActionFor(wishId) {

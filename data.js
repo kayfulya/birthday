@@ -1,8 +1,8 @@
-// === Бронирование через WhatsApp Ули ===
-// Гость кликает «Я беру» → открывается чат в WhatsApp с готовым сообщением.
-// Бесплатные облачные «бины» без регистрации не дают браузеру писать (CORS),
-// поэтому делаем самый простой и надёжный путь — прямое сообщение.
+// === «Я беру» → WhatsApp Ули ===
 const WHATSAPP_PHONE = '79697096595';
+
+// === Сборы — общая ссылка на перевод в Т-Банк ===
+const TBANK_URL = 'https://www.tbank.ru/cf/4cS9QDSyPTm';
 
 // === Большие хочулики ===
 const WISHES = [
@@ -58,17 +58,29 @@ const WISHES = [
     reservable: true,
     favorite: true,
   },
+  {
+    id: 'card',
+    title: 'Открытка от руки',
+    subtitle: 'обычной почтой',
+    note: 'Я буду хранить её всю жизнь!',
+    type: 'gift',
+    price: null,
+    link: null,
+    image: null,
+    reservable: true,
+    favorite: true,
+  },
 
   // === По вашему желанию ===
   {
     id: 'reab',
     title: 'Сбор на лечение',
-    subtitle: 'Собираю деньги на реабилитацию',
+    subtitle: 'собираю деньги на реабилитацию',
     note: 'Я раздробила себе два позвонка и сломала все кости в организме. Восстановилась, но до сих пор хромаю.',
     type: 'collect',
     target: 30000,
     raised: 0,
-    payment: { method: 'Тинькофф', value: '+7 969 709 65 95' },
+    payment: { method: 'Т-Банк', url: TBANK_URL },
     link: 'https://bubnovsky.org/spb/prices/',
     image: 'assets/reab.jpg',
     reservable: false,
@@ -81,7 +93,7 @@ const WISHES = [
     type: 'collect',
     target: 28000,
     raised: 0,
-    payment: { method: 'Тинькофф', value: '+7 969 709 65 95' },
+    payment: { method: 'Т-Банк', url: TBANK_URL },
     link: 'https://vintagedresses.ru/o/b99ab9/',
     image: 'assets/cape.jpg',
     reservable: false,
@@ -94,7 +106,7 @@ const WISHES = [
     type: 'collect',
     target: 37500,
     raised: 0,
-    payment: { method: 'Тинькофф', value: '+7 969 709 65 95' },
+    payment: { method: 'Т-Банк', url: TBANK_URL },
     link: 'https://primuladesign.ru/shop/palto-trapeciia-v-zelenom-cvete',
     image: 'assets/coat.jpg',
     reservable: false,
@@ -187,23 +199,4 @@ const WISHES = [
     image: 'assets/rope-park.svg',
     reservable: true,
   },
-];
-
-// === Маленькие хочулики — короткие, без картинок ===
-const SMALL_WISHES = [
-  { id: 'sm-1', title: 'Завтрак в кровать', subtitle: 'с сырниками', reservable: true },
-  { id: 'sm-2', title: 'Букет полевых цветов', subtitle: 'не магазинных', reservable: true },
-  { id: 'sm-3', title: 'Свеча с запахом дождя', subtitle: '', reservable: true },
-  { id: 'sm-4', title: 'Сертификат на массаж спины', subtitle: '', reservable: true },
-  { id: 'sm-5', title: 'Кашемировые носки', subtitle: 'тёплые', reservable: true },
-  { id: 'sm-6', title: 'Свежий батон с маслом', subtitle: 'и солью', reservable: true },
-  { id: 'sm-7', title: 'Открытка от руки', subtitle: 'обычной почтой', reservable: true },
-  { id: 'sm-8', title: 'Прогулка по крышам', subtitle: 'белые ночи', reservable: true },
-  { id: 'sm-9', title: 'Билет на сапбординг', subtitle: 'по каналам', reservable: true },
-  { id: 'sm-10', title: 'Сертификат в книжный', subtitle: '', reservable: true },
-  { id: 'sm-11', title: 'Парфюм с инжиром', subtitle: '', reservable: true },
-  { id: 'sm-12', title: 'Большая мягкая толстовка', subtitle: 'оверсайз', reservable: true },
-  { id: 'sm-13', title: 'Конфеты-марципаны', subtitle: 'фигурные', reservable: true },
-  { id: 'sm-14', title: 'Маска для лица в баночке', subtitle: '', reservable: true },
-  { id: 'sm-15', title: 'Кофе с подругой в новом месте', subtitle: '', reservable: true },
 ];
