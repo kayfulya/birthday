@@ -62,13 +62,13 @@ const WISHES = [
   {
     id: 'card',
     title: 'Открытка от руки',
-    subtitle: '',
-    note: 'Я буду хранить её всю жизнь!',
+    subtitle: 'сколько угодно',
+    note: 'Я буду хранить их всю жизнь! Пусть будет много — без брони.',
     type: 'gift',
     price: null,
     link: null,
     image: 'assets/card.webp',
-    reservable: true,
+    reservable: false,
     favorite: true,
   },
 
