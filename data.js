@@ -60,6 +60,18 @@ const WISHES = [
     favorite: true,
   },
   {
+    id: 'macstand',
+    title: 'Подставка под мак',
+    subtitle: 'любая · чтобы спина сказала спасибо',
+    note: 'Сижу за маком часами. Хочу поднять экран на уровень глаз.',
+    type: 'gift',
+    price: null,
+    link: 'https://thesweetsetup.com/twelve-south-curve-laptop-stand/',
+    image: 'assets/macstand.svg',
+    reservable: true,
+    favorite: true,
+  },
+  {
     id: 'card',
     title: 'Открытка от руки',
     subtitle: 'сколько угодно',

@@ -62,6 +62,7 @@ function linkHost(url) {
   if (url.includes('bubnovsky')) return 'центр Бубновского';
   if (url.includes('vintagedresses')) return 'VintageDresses';
   if (url.includes('primuladesign')) return 'Primula Design';
+  if (url.includes('thesweetsetup')) return 'обзор-пример';
   return 'сайт';
 }
 

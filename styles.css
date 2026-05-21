@@ -166,6 +166,61 @@ body {
   color: var(--ink);
 }
 
+/* ============= INVITATION ============= */
+
+.invitation {
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  padding: 80px 24px 96px;
+  text-align: center;
+  position: relative;
+}
+@media (min-width: 860px) {
+  .invitation { padding: 120px 48px 140px; }
+}
+
+.invitation__eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 28px;
+  font-weight: 500;
+}
+
+.invitation__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(36px, 6.8vw, 88px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 16ch;
+  margin: 0 auto;
+}
+.invitation__title em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.invitation__body {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(20px, 2.6vw, 28px);
+  line-height: 1.4;
+  color: var(--ink-soft);
+  margin: 32px auto 0;
+  max-width: 32ch;
+}
+
+.invitation__rule {
+  width: 56px;
+  height: 1px;
+  background: var(--accent);
+  margin: 44px auto 0;
+}
+
 /* ============= LIST ============= */
 
 .list {
