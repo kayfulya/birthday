@@ -79,6 +79,7 @@ function renderAction(wish) {
   }
   if (wish.type === 'sweet') return `<p class="wish__hint">Без брони, сколько угодно.</p>`;
   if (wish.type === 'social') return `<p class="wish__hint">Без брони — можно вместе.</p>`;
+  if (wish.reservable === false) return `<p class="wish__hint">Без брони, сколько угодно.</p>`;
   return renderReserveBtn(wish);
 }
 
