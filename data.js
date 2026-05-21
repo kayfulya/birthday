@@ -236,13 +236,13 @@ const WISHES = [
   },
   {
     id: 'shades',
-    title: 'Тёмные очки',
-    subtitle: 'с коричневой оправой',
-    note: 'От ультрафиолета.',
+    title: 'Тёмные очки Polaroid',
+    subtitle: 'PLD 6175 · 086 · с поляризацией',
+    note: 'Коричневая черепаховая оправа, зелёные линзы. От ультрафиолета.',
     type: 'gift',
     price: null,
-    link: null,
-    image: 'assets/shades.svg',
+    link: 'https://www.wildberries.ru/catalog/224381897/detail.aspx?size=355755050',
+    image: 'assets/shades.webp',
     reservable: true,
   },
   {
