@@ -168,6 +168,17 @@ const WISHES = [
     reservable: true,
   },
   {
+    id: 'planner',
+    title: 'Красивый ежедневник',
+    subtitle: 'с обложкой, чтобы тянуло открывать',
+    note: 'Веду от руки. Хочу такой, чтобы прям радовал.',
+    type: 'gift',
+    price: null,
+    link: null,
+    image: 'assets/planner.svg',
+    reservable: true,
+  },
+  {
     id: 'book-gregori',
     title: 'Книга «Вечная принцесса»',
     subtitle: 'Филиппа Грегори',
